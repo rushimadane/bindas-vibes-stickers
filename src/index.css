@@ -1,42 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* bindassticks Design System - Gen Z E-commerce Vibes */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark Mode Base - Primary Theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 240 5% 6%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Neon Accent Colors for Gen Z Energy */
+    --primary: 321 100% 50%; /* Electric Pink #FF00A8 */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 195 100% 50%; /* Cyber Blue #00BFFF */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 82 100% 50%; /* Lime Green #7FFF00 */
+    --accent-foreground: 240 10% 3.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Muted tones for subtle elements */
+    --muted: 240 6% 10%;
+    --muted-foreground: 240 5% 65%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 6% 20%;
+    --input: 240 6% 10%;
+    --ring: 321 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
+
+    /* Custom Design Tokens */
+    --glass-bg: 240 10% 8% / 0.4;
+    --glass-border: 240 20% 30% / 0.3;
+    --neon-glow: 0 0 20px hsl(var(--primary) / 0.5);
+    --neon-glow-secondary: 0 0 20px hsl(var(--secondary) / 0.5);
+    --neon-glow-accent: 0 0 20px hsl(var(--accent) / 0.5);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)));
+    --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg)), hsl(240 10% 12% / 0.2));
+
+    /* Animation Curves */
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +119,138 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bebas tracking-wide;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Effects */
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--glass-border));
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl;
+  }
+
+  /* Neon Button Variants */
+  .btn-neon {
+    @apply relative px-8 py-4 rounded-full font-medium text-sm uppercase tracking-wider;
+    @apply transition-all duration-300 overflow-hidden;
+    background: var(--gradient-primary);
+    box-shadow: var(--neon-glow);
+  }
+
+  .btn-neon:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--neon-glow), 0 10px 40px hsl(var(--primary) / 0.4);
+  }
+
+  .btn-neon-secondary {
+    @apply btn-neon;
+    background: var(--gradient-accent);
+    box-shadow: var(--neon-glow-secondary);
+  }
+
+  .btn-neon-secondary:hover {
+    box-shadow: var(--neon-glow-secondary), 0 10px 40px hsl(var(--secondary) / 0.4);
+  }
+
+  /* Animated Text Gradients */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease-in-out infinite;
+  }
+
+  .text-gradient-accent {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Floating Sticker Animation */
+  .floating-sticker {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .floating-sticker:nth-child(2n) {
+    animation-delay: -2s;
+  }
+
+  .floating-sticker:nth-child(3n) {
+    animation-delay: -4s;
+  }
+
+  /* Peel Away Effect for Product Cards */
+  .peel-corner {
+    @apply relative overflow-hidden;
+  }
+
+  .peel-corner::after {
+    content: '';
+    @apply absolute top-0 right-0 w-6 h-6;
+    background: linear-gradient(-45deg, transparent 50%, hsl(var(--primary) / 0.8) 50%);
+    transform: translateX(100%) translateY(-100%);
+    transition: transform 0.3s var(--ease-smooth);
+  }
+
+  .peel-corner:hover::after {
+    transform: translateX(0) translateY(0);
+  }
+
+  /* Scroll Reveal Animations */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.6s var(--ease-smooth);
+  }
+
+  .reveal-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  /* Custom Animation Utilities */
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(1deg); }
+    66% { transform: translateY(-10px) rotate(-1deg); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+    50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.8); }
+  }
+
+  @keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Animation Classes */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s var(--ease-bounce);
   }
 }
