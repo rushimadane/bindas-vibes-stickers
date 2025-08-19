@@ -26,9 +26,9 @@ const App = () => (
     <TooltipProvider>
       <CartProvider>
         <FavoritesProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
+            <Toaster />
+            <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
@@ -43,7 +43,6 @@ const App = () => (
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/address" element={<Address />} />
               <Route path="/checkout" element={<Checkout />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

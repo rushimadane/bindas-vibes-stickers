@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   {
@@ -52,7 +53,31 @@ const categories = [
   },
 ];
 
+// Helper function to convert category name to a URL-friendly slug
+const slugify = (text: string) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/&/g, '-and-')         // Replace & with 'and'
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-');        // Replace multiple - with single -
+};
+
 export function CategoriesSection() {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryName: string) => {
+    const slug = slugify(categoryName);
+    // This logic specifically handles the routes for categories with subcategory pages
+    if (slug === 'anime-manga' || slug === 'gaming') {
+      navigate(`/categories/${slug}`);
+    } else {
+      // All other categories go to a general listing page
+      navigate(`/categories/${slug}`);
+    }
+  };
+
   return (
     <section className="py-20 px-4">
       <div className="container mx-auto">
@@ -73,6 +98,7 @@ export function CategoriesSection() {
               key={category.name}
               className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner reveal-up"
               style={{ animationDelay: `${index * 100}ms` }}
+              onClick={() => handleCategoryClick(category.name)}
             >
               <CardContent className="p-6 text-center h-full flex flex-col justify-center">
                 <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl group-hover:scale-110 transition-transform duration-300`}>
