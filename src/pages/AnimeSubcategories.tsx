@@ -33,25 +33,20 @@ const AnimeSubcategories = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {animeSubcategories.map((subcategory, index) => (
+            {animeSubcategories.map((subcategory) => (
               <Card
                 key={subcategory.slug}
-                className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner reveal-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner"
                 onClick={() => navigate(`/categories/anime-manga/${subcategory.slug}`)}
               >
                 <CardContent className="p-6 text-center h-full flex flex-col justify-center">
-                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl group-hover:scale-110 transition-transform duration-300">
                     {subcategory.emoji}
                   </div>
                   <h3 className="font-bebas text-xl mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                     {subcategory.name}
                   </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-primary hover:text-primary hover:bg-primary/10"
-                  >
+                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
                     Shop Now
                   </Button>
                 </CardContent>

@@ -40,10 +40,15 @@ const App = () => (
               <Route path="/shop" element={<Shop />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/new-arrivals" element={<NewArrivals />} />
+
+              {/* --- THE FINAL FIX: Specific routes MUST come BEFORE the general :category route --- */}
               <Route path="/categories/anime-manga" element={<AnimeSubcategories />} />
               <Route path="/categories/gaming" element={<GamingSubcategories />} />
+              
+              {/* This will now only match AFTER checking for anime and gaming */}
               <Route path="/categories/:category" element={<ProductListing />} />
               <Route path="/categories/:category/:subcategory" element={<ProductListing />} />
+              
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/favorites" element={<Favorites />} />

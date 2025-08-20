@@ -33,11 +33,10 @@ const GamingSubcategories = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {gamingSubcategories.map((subcategory, index) => (
+            {gamingSubcategories.map((subcategory) => (
               <Card
                 key={subcategory.slug}
-                className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner reveal-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner"
                 onClick={() => navigate(`/categories/gaming/${subcategory.slug}`)}
               >
                 <CardContent className="p-6 text-center h-full flex flex-col justify-center">
@@ -47,11 +46,7 @@ const GamingSubcategories = () => {
                   <h3 className="font-bebas text-xl mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
                     {subcategory.name}
                   </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-primary hover:text-primary hover:bg-primary/10"
-                  >
+                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
                     Shop Now
                   </Button>
                 </CardContent>

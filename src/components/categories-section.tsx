@@ -3,79 +3,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 
 const categories = [
-  {
-    name: 'Anime & Manga',
-    description: 'Your favorite characters',
-    emoji: '🎌',
-    color: 'bg-primary',
-  },
-  {
-    name: 'Gaming',
-    description: 'Level up your setup',
-    emoji: '🎮',
-    color: 'bg-secondary',
-  },
-  {
-    name: 'Gen Z Slang',
-    description: 'IYKYK, No Cap vibes',
-    emoji: '💬',
-    color: 'bg-accent',
-  },
-  {
-    name: 'Meme Culture',
-    description: 'Internet humor at its finest',
-    emoji: '😂',
-    color: 'bg-primary',
-  },
-  {
-    name: 'Cars & JDM',
-    description: 'Ride with style',
-    emoji: '🏎️',
-    color: 'bg-secondary',
-  },
-  {
-    name: 'Hypebeast',
-    description: 'Stay fresh, stay fly',
-    emoji: '👟',
-    color: 'bg-accent',
-  },
-  {
-    name: 'Tech & Coding',
-    description: 'For the digital natives',
-    emoji: '💻',
-    color: 'bg-primary',
-  },
-  {
-    name: 'Y2K Aesthetic',
-    description: 'Retro futuristic vibes',
-    emoji: '✨',
-    color: 'bg-secondary',
-  },
+  { name: 'Anime & Manga', slug: 'anime-manga', description: 'Your favorite characters', emoji: '🎌', color: 'bg-primary' },
+  { name: 'Gaming', slug: 'gaming', description: 'Level up your setup', emoji: '🎮', color: 'bg-secondary' },
+  { name: 'Gen Z Slang', slug: 'gen-z-slang', description: 'IYKYK, No Cap vibes', emoji: '💬', color: 'bg-accent' },
+  { name: 'Meme Culture', slug: 'meme-culture', description: 'Internet humor at its finest', emoji: '😂', color: 'bg-primary' },
+  { name: 'Cars & JDM', slug: 'cars-and-jdm', description: 'Ride with style', emoji: '🏎️', color: 'bg-secondary' },
+  { name: 'Hypebeast', slug: 'hypebeast', description: 'Stay fresh, stay fly', emoji: '👟', color: 'bg-accent' },
+  { name: 'Tech & Coding', slug: 'tech-and-coding', description: 'For the digital natives', emoji: '💻', color: 'bg-primary' },
+  { name: 'Y2K Aesthetic', slug: 'y2k-aesthetic', description: 'Retro futuristic vibes', emoji: '✨', color: 'bg-secondary' },
 ];
-
-// Helper function to convert category name to a URL-friendly slug
-const slugify = (text: string) => {
-  return text
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/&/g, '-and-')         // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-    .replace(/\-\-+/g, '-');        // Replace multiple - with single -
-};
 
 export function CategoriesSection() {
   const navigate = useNavigate();
 
-  const handleCategoryClick = (categoryName: string) => {
-    const slug = slugify(categoryName);
-    // This logic specifically handles the routes for categories with subcategory pages
-    if (slug === 'anime-manga' || slug === 'gaming') {
-      navigate(`/categories/${slug}`);
-    } else {
-      // All other categories go to a general listing page
-      navigate(`/categories/${slug}`);
-    }
+  const handleCategoryClick = (slug: string) => {
+    // This now simply navigates to the correct slug path.
+    // The logic is now entirely handled by the router in App.tsx.
+    navigate(`/categories/${slug}`);
   };
 
   return (
@@ -97,8 +41,7 @@ export function CategoriesSection() {
             <Card
               key={category.name}
               className="glass-card group cursor-pointer hover:scale-105 transition-all duration-300 peel-corner reveal-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-              onClick={() => handleCategoryClick(category.name)}
+              onClick={() => handleCategoryClick(category.slug)}
             >
               <CardContent className="p-6 text-center h-full flex flex-col justify-center">
                 <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl group-hover:scale-110 transition-transform duration-300`}>
