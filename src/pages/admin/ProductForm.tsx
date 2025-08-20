@@ -75,11 +75,17 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       if (imageFile) {
         const fileKey = `products/${Date.now()}_${imageFile.name}`;
 
+        // --- THIS IS THE FIX ---
+        // Read the file into a buffer before uploading
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const body = new Uint8Array(arrayBuffer);
+        // --- END OF FIX ---
+
         await r2.send(
           new PutObjectCommand({
             Bucket: import.meta.env.VITE_CLOUDFLARE_R2_BUCKET_NAME,
             Key: fileKey,
-            Body: imageFile,
+            Body: body, // Use the buffer here
             ContentType: imageFile.type,
           })
         );
@@ -95,12 +101,10 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       };
 
       if (productToEdit) {
-        // Update existing document
         const productRef = doc(db, "products", productToEdit.id!);
         await updateDoc(productRef, productData);
         toast({ title: "Product updated successfully!" });
       } else {
-        // Add new document
         await addDoc(collection(db, "products"), productData);
         toast({ title: "Product added successfully!" });
       }
