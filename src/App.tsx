@@ -19,6 +19,11 @@ import Address from "./pages/Address";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
+// Admin Imports
+import AdminLogin from "./pages/admin/AdminLogin";
+import Dashboard from "./pages/admin/Dashboard";
+import Products from "./pages/admin/Products";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -30,6 +35,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <Routes>
+              {/* Customer Facing Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/categories" element={<Categories />} />
@@ -43,6 +49,13 @@ const App = () => (
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/address" element={<Address />} />
               <Route path="/checkout" element={<Checkout />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/products" element={<Products />} />
+
+              {/* Catch-all Not Found Route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
