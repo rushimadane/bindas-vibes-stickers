@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { r2 } from "@/lib/r2";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 export interface Product {
   id?: string;
@@ -72,10 +73,18 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       let imageUrl = productToEdit?.imageUrl || '';
       
       if (imageFile) {
-        // 1. Upload new image to Firebase Storage if one is selected
-        const imageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(imageRef, imageFile);
-        imageUrl = await getDownloadURL(snapshot.ref);
+        const fileKey = `products/${Date.now()}_${imageFile.name}`;
+
+        await r2.send(
+          new PutObjectCommand({
+            Bucket: import.meta.env.VITE_CLOUDFLARE_R2_BUCKET_NAME,
+            Key: fileKey,
+            Body: imageFile,
+            ContentType: imageFile.type,
+          })
+        );
+        
+        imageUrl = `${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_URL}/${fileKey}`;
       }
       
       const productData = {
