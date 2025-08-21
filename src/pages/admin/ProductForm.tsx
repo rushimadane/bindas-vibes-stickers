@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea"; // Import Textarea
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
@@ -15,6 +16,7 @@ export interface Product {
   name: string;
   price: number;
   category: string;
+  description: string; // Add description field
   imageUrl: string;
 }
 
@@ -30,6 +32,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
+  const [description, setDescription] = useState(''); // State for description
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,6 +41,8 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       setName(productToEdit.name);
       setPrice(String(productToEdit.price));
       setCategory(productToEdit.category);
+      setDescription(productToEdit.description || ''); // Set description
+      setImageFile(null);
     } else {
       resetForm();
     }
@@ -58,6 +63,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
     setName('');
     setPrice('');
     setCategory('');
+    setDescription('');
     setImageFile(null);
   };
 
@@ -74,18 +80,14 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       
       if (imageFile) {
         const fileKey = `products/${Date.now()}_${imageFile.name}`;
-
-        // --- THIS IS THE FIX ---
-        // Read the file into a buffer before uploading
         const arrayBuffer = await imageFile.arrayBuffer();
         const body = new Uint8Array(arrayBuffer);
-        // --- END OF FIX ---
 
         await r2.send(
           new PutObjectCommand({
             Bucket: import.meta.env.VITE_CLOUDFLARE_R2_BUCKET_NAME,
             Key: fileKey,
-            Body: body, // Use the buffer here
+            Body: body,
             ContentType: imageFile.type,
           })
         );
@@ -97,6 +99,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
         name,
         price: Number(price),
         category,
+        description, // Include description in data
         imageUrl,
       };
 
@@ -132,6 +135,10 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
           <div>
             <Label htmlFor="name">Sticker Name</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="glass-card border-border/30 bg-muted/20" required />
+          </div>
+           <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="glass-card border-border/30 bg-muted/20" />
           </div>
           <div>
             <Label htmlFor="price">Price (₹)</Label>

@@ -1,100 +1,101 @@
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Header } from "@/components/ui/header";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PlusCircle } from "lucide-react";
-import ProductForm, { Product } from "./ProductForm";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Sidebar } from '@/components/ui/sidebar';
+import ProductForm, { Product } from './ProductForm';
+import { useToast } from '@/hooks/use-toast';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { Pencil, Trash2 } from 'lucide-react';
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const { toast } = useToast();
 
-  const fetchProducts = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const querySnapshot = await getDocs(collection(db, "products"));
-      const productsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-      setProducts(productsData);
-    } catch (error) {
-      console.error("Error fetching products: ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchProducts = async () => {
+    const querySnapshot = await getDocs(collection(db, "products"));
+    const productsList = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as Product[];
+    setProducts(productsList);
+  };
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+  }, []);
 
-  const handleAddProduct = () => {
+  const handleEdit = (product: Product) => {
+    setProductToEdit(product);
+    setIsFormOpen(true);
+  };
+
+  const handleAddNew = () => {
     setProductToEdit(null);
     setIsFormOpen(true);
   };
 
+  const handleDelete = async (productId: string) => {
+    if (!productId) return;
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        await deleteDoc(doc(db, "products", productId));
+        toast({ title: "Product deleted successfully!" });
+        fetchProducts(); // Refresh the list
+      } catch (error) {
+        console.error("Error deleting product: ", error);
+        toast({ title: "Failed to delete product", variant: "destructive" });
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="pt-8 pb-20">
-        <div className="container mx-auto px-4">
-          <Card className="glass-card">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="font-bebas text-3xl text-gradient">Manage Products</CardTitle>
-              <Button className="btn-neon" onClick={handleAddProduct}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add New Sticker
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Actions</TableHead>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 p-8">
+        <Card className="glass-card">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-bebas text-3xl text-gradient">MANAGE STICKERS</CardTitle>
+            <Button className="btn-neon" onClick={handleAddNew}>Add New Sticker</Button>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded-md" />
+                    </TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.category}</TableCell>
+                    <TableCell>₹{product.price}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(product)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(product.id!)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">Loading products...</TableCell>
-                    </TableRow>
-                  ) : products.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        You haven't added any products yet.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    products.map(product => (
-                      <TableRow key={product.id}>
-                        <TableCell><img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded-md" /></TableCell>
-                        <TableCell>{product.name}</TableCell>
-                        <TableCell>{product.category}</TableCell>
-                        <TableCell>₹{product.price}</TableCell>
-                        <TableCell>
-                          {/* Edit and Delete buttons will be added in a future step */}
-                          <Button variant="outline" size="sm" disabled>Edit</Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </main>
-      
-      <ProductForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
+      <ProductForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
         onProductUpdate={fetchProducts}
         productToEdit={productToEdit}
       />
