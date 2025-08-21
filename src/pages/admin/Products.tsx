@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Sidebar } from '@/components/ui/sidebar';
-import ProductForm, { Product } from './ProductForm';
+import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar'; // Import SidebarInset
+import ProductForm from './ProductForm';
 import { useToast } from '@/hooks/use-toast';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Pencil, Trash2 } from 'lucide-react';
+import { Product } from '@/types';
 
 const Products = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -41,7 +42,7 @@ const Products = () => {
       try {
         await deleteDoc(doc(db, "products", productId));
         toast({ title: "Product deleted successfully!" });
-        fetchProducts(); // Refresh the list
+        fetchProducts();
       } catch (error) {
         console.error("Error deleting product: ", error);
         toast({ title: "Failed to delete product", variant: "destructive" });
@@ -50,15 +51,16 @@ const Products = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <SidebarProvider>
       <Sidebar />
-      <main className="flex-1 p-8">
-        <Card className="glass-card">
+      {/* --- THIS IS THE FIX --- */}
+      <SidebarInset className="flex flex-col flex-1 p-8">
+        <Card className="glass-card flex-1 flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-bebas text-3xl text-gradient">MANAGE STICKERS</CardTitle>
             <Button className="btn-neon" onClick={handleAddNew}>Add New Sticker</Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -92,14 +94,14 @@ const Products = () => {
             </Table>
           </CardContent>
         </Card>
-      </main>
+      </SidebarInset>
       <ProductForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onProductUpdate={fetchProducts}
         productToEdit={productToEdit}
       />
-    </div>
+    </SidebarProvider>
   );
 };
 

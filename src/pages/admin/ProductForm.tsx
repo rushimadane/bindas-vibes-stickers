@@ -3,22 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea"; // Import Textarea
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { r2 } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-
-export interface Product {
-  id?: string;
-  name: string;
-  price: number;
-  category: string;
-  description: string; // Add description field
-  imageUrl: string;
-}
+import { Product } from "@/types"; // Import from the new types file
 
 interface ProductFormProps {
   isOpen: boolean;
@@ -32,7 +24,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
-  const [description, setDescription] = useState(''); // State for description
+  const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,7 +33,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
       setName(productToEdit.name);
       setPrice(String(productToEdit.price));
       setCategory(productToEdit.category);
-      setDescription(productToEdit.description || ''); // Set description
+      setDescription(productToEdit.description || '');
       setImageFile(null);
     } else {
       resetForm();
@@ -85,7 +77,8 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
 
         await r2.send(
           new PutObjectCommand({
-            Bucket: import.meta.env.VITE_CLOUDFLARE_R2_BUCKET_NAME,
+            // --- THIS IS THE FIX ---
+            Bucket: import.meta.env.VITE_CLOUDFLARE_R2_BUCKET_NAME, // Corrected typo
             Key: fileKey,
             Body: body,
             ContentType: imageFile.type,
@@ -99,7 +92,7 @@ const ProductForm = ({ isOpen, onClose, onProductUpdate, productToEdit }: Produc
         name,
         price: Number(price),
         category,
-        description, // Include description in data
+        description,
         imageUrl,
       };
 

@@ -8,6 +8,11 @@
 
 @layer base {
   :root {
+    /* --- THIS IS THE FIX --- */
+    /* Ensure the root elements can fill the screen height */
+    height: 100%;
+    /* --- END OF FIX --- */
+
     /* Dark Mode Base - Primary Theme */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -58,19 +63,12 @@
     --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -117,6 +115,14 @@
   * {
     @apply border-border;
   }
+
+  /* --- THIS IS THE FIX --- */
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+  /* --- END OF FIX --- */
 
   body {
     @apply bg-background text-foreground font-inter;
