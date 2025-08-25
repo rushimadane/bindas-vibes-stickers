@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar'; // Import SidebarInset
+//import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar'; // Import SidebarInset
 import ProductForm from './ProductForm';
 import { useToast } from '@/hooks/use-toast';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -51,10 +51,7 @@ const Products = () => {
   };
 
   return (
-    <SidebarProvider>
-      <Sidebar />
-      {/* --- THIS IS THE FIX --- */}
-      <SidebarInset className="flex flex-col flex-1 p-8">
+  
         <Card className="glass-card flex-1 flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-bebas text-3xl text-gradient">MANAGE STICKERS</CardTitle>
@@ -94,14 +91,8 @@ const Products = () => {
             </Table>
           </CardContent>
         </Card>
-      </SidebarInset>
-      <ProductForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onProductUpdate={fetchProducts}
-        productToEdit={productToEdit}
-      />
-    </SidebarProvider>
+     
+      
   );
 };
 
